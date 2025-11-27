@@ -12,6 +12,13 @@ conda activate acms_env
 conda install -c conda-forge gmsh trimesh numpy scipy networkx
 ```
 
+## Supported Formats
+
+> [!IMPORTANT]
+> **ACMS requires universal CAD formats.**
+> Proprietary formats like `.SLDPRT` (SolidWorks), `.CATPart` (CATIA), or `.IPT` (Inventor) are **NOT** supported directly.
+> Please export your models to **STEP** (`.stp`, `.step`) or **IGES** (`.igs`) before using this system.
+
 ## Structure
 
 - `main.py`: CLI entry point.
@@ -21,6 +28,23 @@ conda install -c conda-forge gmsh trimesh numpy scipy networkx
     - `mesher.py`: Generates meshes using Gmsh.
     - `validator.py`: Checks mesh quality using Trimesh.
     - `optimizer.py`: Repairs/Optimizes meshes using Trimesh/Gmsh.
+
+## System Architecture
+
+```mermaid
+graph TD
+    User[User Input (STEP/IGES)] --> Supervisor
+    Supervisor -->|Parse| Parser
+    Parser -->|BREP| Supervisor
+    Supervisor -->|Mesh| Mesher
+    Mesher -->|STL| Supervisor
+    Supervisor -->|Validate| Validator
+    Validator -->|Report| Supervisor
+    Supervisor -->|Decision| Logic{Pass?}
+    Logic -->|Yes| Success[Final Mesh]
+    Logic -->|No| Optimizer
+    Optimizer -->|Repaired STL| Supervisor
+```
 
 ## Usage
 
