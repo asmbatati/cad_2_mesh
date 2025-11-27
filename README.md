@@ -9,7 +9,7 @@ You need a Python environment with the following libraries. We recommend using `
 ```bash
 conda create -n acms_env python=3.9
 conda activate acms_env
-conda install -c conda-forge pythonocc-core gmsh trimesh numpy scipy networkx
+conda install -c conda-forge gmsh trimesh numpy scipy networkx
 ```
 
 ## Structure
@@ -17,7 +17,7 @@ conda install -c conda-forge pythonocc-core gmsh trimesh numpy scipy networkx
 - `main.py`: CLI entry point.
 - `core/supervisor.py`: The central orchestration logic (Algorithm 1).
 - `agents/`:
-    - `parser.py`: Loads STEP files using pythonOCC.
+    - `parser.py`: Loads STEP files using Gmsh (OpenCASCADE backend).
     - `mesher.py`: Generates meshes using Gmsh.
     - `validator.py`: Checks mesh quality using Trimesh.
     - `optimizer.py`: Repairs/Optimizes meshes using Trimesh/Gmsh.
