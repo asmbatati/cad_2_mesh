@@ -14,7 +14,8 @@ class ParserAgent:
         if not os.path.exists(step_path):
             return AgentResult(AgentStatus.FAILURE, error=f"File not found: {step_path}")
 
-        filename = os.path.basename(step_path).replace(".step", ".brep").replace(".stp", ".brep")
+        base, _ = os.path.splitext(os.path.basename(step_path))
+        filename = f"{base}.brep"
         output_path = os.path.join(output_dir, filename)
 
         try:

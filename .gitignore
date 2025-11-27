@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# CAD Files
+*.step
+*.stp
+*.brep
+*.IGS
+*.igs
+*.SLDPRT
+*.SLDASM
+*.CATPart
+*.IPT
+
+# Mesh Files
+*.stl
+*.msh
+*.obj
+*.ply
+
+# Generated Artifacts
+workspace/
+tests/Mesh results/
+tests/figures/
+tests/numerical_results.csv
+tests/test_cube.step
+tests/test_cube.brep
+
+# OS
+.DS_Store
+Thumbs.db

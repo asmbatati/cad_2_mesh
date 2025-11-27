@@ -18,13 +18,13 @@ def main():
     print(f"Starting ACMS on {input_path}...")
     
     supervisor = Supervisor(workspace_dir=args.workspace)
-    success = supervisor.run(input_path)
+    result = supervisor.run(input_path)
     
-    if success:
+    if result["status"] == "SUCCESS":
         print("\nACMS Completed Successfully.")
         sys.exit(0)
     else:
-        print("\nACMS Failed.")
+        print(f"\nACMS Failed: {result.get('error', 'Unknown error')}")
         sys.exit(1)
 
 if __name__ == "__main__":
