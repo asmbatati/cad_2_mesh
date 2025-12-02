@@ -1,0 +1,9 @@
+Model,Status,Iterations,Duration_sec,Error,Final_Mesh,Watertight,Faces,Vertices,Volume
+Part4.STEP,SUCCESS,1,0.99,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\Part4\Part4.stl,True,3888,1896,371850.95745881554
+l6.STEP,SUCCESS,1,0.2,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\l6\l6.stl,True,1528,764,15872.000000000005
+l5.STEP,SUCCESS,1,0.23,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\l5\l5.stl,True,1770,885,150300.89648287455
+Hat.STEP,SUCCESS,1,1.57,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\Hat\Hat.stl,True,1596,800,198474.46755649522
+Spur Gear.STEP,SUCCESS,1,1.79,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\Spur Gear\Spur Gear.stl,True,6256,3128,61076.256634550264
+MGD-25.STEP,SUCCESS,1,0.58,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\MGD-25\MGD-25.stl,True,3552,1768,178501.67724064772
+StudyCadCam 63.step,SUCCESS,1,0.43,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\StudyCadCam 63\StudyCadCam 63.stl,True,2768,1368,27943325.709527284
+Flexible Shaft Coupler 5x8mm.step,SUCCESS,1,1.85,,G:\My Drive\02 Areas\Career\PSU\Research\ACMS\cad_2_mesh\tests\Mesh results\Flexible Shaft Coupler 5x8mm\Flexible Shaft Coupler 5x8mm.stl,True,5220,2602,5557.360341316652
