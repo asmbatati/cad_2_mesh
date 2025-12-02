@@ -33,14 +33,14 @@ conda install -c conda-forge gmsh trimesh numpy scipy networkx
 
 ```mermaid
 graph TD
-    User[User Input (STEP/IGES)] --> Supervisor
+    User["User Input (STEP/IGES)"] --> Supervisor
     Supervisor -->|Parse| Parser
     Parser -->|BREP| Supervisor
     Supervisor -->|Mesh| Mesher
     Mesher -->|STL| Supervisor
     Supervisor -->|Validate| Validator
     Validator -->|Report| Supervisor
-    Supervisor -->|Decision| Logic{Pass?}
+    Supervisor -->|Decision| Logic{"Pass?"}
     Logic -->|Yes| Success[Final Mesh]
     Logic -->|No| Optimizer
     Optimizer -->|Repaired STL| Supervisor
