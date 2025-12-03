@@ -93,6 +93,26 @@ class Supervisor:
                     print(f"Optimization Failed: {opt_res.error}")
                     result["error"] = opt_res.error
                     return result
+            elif "self_intersection" in failures:
+                print("Strategy: Repair Self-Intersections")
+                opt_res = self.optimizer.run(current_mesh, self.workspace_dir, task="repair_intersection")
+                if opt_res.status == AgentStatus.SUCCESS:
+                    current_mesh = opt_res.artifact
+                else:
+                    print(f"Optimization Failed: {opt_res.error}")
+                    result["error"] = opt_res.error
+                    return result
+
+            elif "disconnected_components" in failures:
+                print("Strategy: Remove Disconnected Components")
+                opt_res = self.optimizer.run(current_mesh, self.workspace_dir, task="repair_components")
+                if opt_res.status == AgentStatus.SUCCESS:
+                    current_mesh = opt_res.artifact
+                else:
+                    print(f"Optimization Failed: {opt_res.error}")
+                    result["error"] = opt_res.error
+                    return result
+
             else:
                 print("Strategy: Remesh with Higher Fineness")
                 # Note: We need to go back to B-Rep for remeshing

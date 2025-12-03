@@ -39,8 +39,26 @@ class OptimizerAgent:
                 trimesh.smoothing.filter_laplacian(mesh, iterations=5)
                 log.append("Applied Laplacian smoothing.")
                 
-            else:
-                return AgentResult(AgentStatus.FAILURE, error=f"Unknown task: {task}")
+                trimesh.smoothing.filter_laplacian(mesh, iterations=5)
+                log.append("Applied Laplacian smoothing.")
+                
+            elif task == "repair_intersection":
+                # Attempt to fix winding and remove degenerate faces which often cause intersections
+                trimesh.repair.fix_winding(mesh)
+                trimesh.repair.fix_inversion(mesh)
+                log.append("Fixed winding and inversion for intersections.")
+
+            elif task == "repair_components":
+                # Keep only the largest component (assuming others are noise/artifacts)
+                # Or we could try to stitch them, but keeping largest is a standard "cleanup" strategy
+                components = mesh.split(only_watertight=False)
+                if len(components) > 0:
+                    # Sort by volume (if watertight) or vertex count
+                    components.sort(key=lambda m: len(m.vertices), reverse=True)
+                    mesh = components[0]
+                    log.append("Kept largest component.")
+                else:
+                    log.append("No components found to filter.")
 
             mesh.export(output_path)
             

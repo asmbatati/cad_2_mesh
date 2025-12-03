@@ -30,6 +30,19 @@ class ValidatorAgent:
             # trimesh.graph.connected_components(mesh.edges_unique)
             details.append("open_edges_detected")
 
+        # Check for self-intersections (using winding consistency as proxy or explicit check)
+        # Note: trimesh.intersection.is_intersection is expensive, so we use winding/volume checks as proxies or simpler heuristics
+        try:
+            if not mesh.is_winding_consistent:
+                 failures.append("self_intersection")
+        except:
+            pass
+
+        # Check for disconnected components
+        if mesh.body_count > 1:
+            failures.append("disconnected_components")
+            details.append(f"found_{mesh.body_count}_components")
+
         # Aspect Ratio (Mock approximation using edge lengths)
         edges = mesh.edges_unique_length
         if len(edges) > 0:

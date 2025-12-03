@@ -1,10 +1,10 @@
 # ACMS: Automated CAD-to-Mesh System
 
-This is the full implementation of the ACMS architecture described in the paper. It uses `pythonOCC`, `gmsh`, and `trimesh` to perform closed-loop CAD-to-mesh conversion.
+This is the full implementation of the ACMS architecture described in the paper. It uses `gmsh` and `trimesh` to perform closed-loop CAD-to-mesh conversion.
 
 ## Prerequisites
 
-You need a Python environment with the following libraries. We recommend using `conda` or `mamba` because `pythonOCC` and `gmsh` have binary dependencies.
+You need a Python environment with the following libraries. We recommend using `conda` or `mamba` because `gmsh` has binary dependencies.
 
 ```bash
 conda create -n acms_env python=3.9
@@ -17,17 +17,18 @@ conda install -c conda-forge gmsh trimesh numpy scipy networkx
 > [!IMPORTANT]
 > **ACMS requires universal CAD formats.**
 > Proprietary formats like `.SLDPRT` (SolidWorks), `.CATPart` (CATIA), or `.IPT` (Inventor) are **NOT** supported directly.
-> Please export your models to **STEP** (`.stp`, `.step`) or **IGES** (`.igs`) before using this system.
+> Please export your models to **STEP** (`.stp`, `.step`) before using this system. IGES (`.igs`) support is experimental and treated as STEP.
 
 ## Structure
 
 - `main.py`: CLI entry point.
+- `run_batch.py`: Root batch processing script.
 - `core/supervisor.py`: The central orchestration logic (Algorithm 1).
 - `agents/`:
     - `parser.py`: Loads STEP files using Gmsh (OpenCASCADE backend).
     - `mesher.py`: Generates meshes using Gmsh.
     - `validator.py`: Checks mesh quality using Trimesh.
-    - `optimizer.py`: Repairs/Optimizes meshes using Trimesh/Gmsh.
+    - `optimizer.py`: Repairs/Optimizes meshes using Trimesh.
 
 ## System Architecture
 
