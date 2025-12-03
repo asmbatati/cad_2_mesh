@@ -126,3 +126,45 @@ class Supervisor:
                     
         print("\n>>> FAILURE: Max iterations reached.")
         return result
+
+    def run_baseline(self, input_step_path: str) -> dict:
+        """
+        Runs the linear baseline: Parser -> Mesher -> Optimizer (Blind) -> Validator (Report only)
+        No feedback loop.
+        """
+        print(f"=== ACMS Baseline: Processing {input_step_path} ===")
+        
+        # 1. Parse
+        input_artifact = Artifact(ArtifactType.STEP_FILE, input_step_path)
+        parse_res = self.parser.run(input_artifact, self.workspace_dir)
+        if parse_res.status == AgentStatus.FAILURE:
+            return {"model": os.path.basename(input_step_path), "status": "FAILURE", "error": parse_res.error}
+        brep_artifact = parse_res.artifact
+
+        # 2. Mesh (Default parameters)
+        mesh_res = self.mesher.run(brep_artifact, self.workspace_dir, fineness=0.5)
+        if mesh_res.status == AgentStatus.FAILURE:
+            return {"model": os.path.basename(input_step_path), "status": "FAILURE", "error": mesh_res.error}
+        current_mesh = mesh_res.artifact
+
+        # 3. Optimizer (Blind pass - e.g. just smoothing or simple repair)
+        # Baseline typically does a standard "cleanup"
+        opt_res = self.optimizer.run(current_mesh, self.workspace_dir, task="repair_watertight")
+        if opt_res.status == AgentStatus.SUCCESS:
+            current_mesh = opt_res.artifact
+
+        # 4. Validate (Just to get metrics)
+        val_res = self.validator.run(current_mesh)
+        report = {}
+        if val_res.status == AgentStatus.SUCCESS:
+            report = val_res.artifact.metadata
+        
+        status = "SUCCESS" if report.get("status") == "SUCCESS" else "FAILURE"
+        
+        return {
+            "model": os.path.basename(input_step_path),
+            "status": status,
+            "iterations": 1,
+            "final_mesh_path": current_mesh.path,
+            "validation_report": report
+        }

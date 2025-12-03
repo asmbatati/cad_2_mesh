@@ -76,5 +76,79 @@ def analyze_results():
 
     print(f"Analysis complete. Figures saved to {output_dir}")
 
+    # --- Generate Table 1: Comparative Performance ---
+    print("\nGenerating Table 1...")
+    
+    # Filter for relevant columns
+    table_cols = ['Category', 'Method', 'Status', 'Avg_Jacobian', 'Iterations']
+    if not all(col in df.columns for col in table_cols):
+        print("Warning: Missing columns for Table 1 generation. Run batch test first.")
+        return
+
+    # Group by Category and Method
+    # Calculate Success Rate, Avg Jacobian, Avg Iterations
+    results = []
+    
+    categories = ['Simple', 'Industrial', 'Organic']
+    methods = ['Baseline', 'ACMS']
+    
+    for cat in categories:
+        row_data = {'Category': cat}
+        for method in methods:
+            subset = df[(df['Category'] == cat) & (df['Method'] == method)]
+            total = len(subset)
+            if total == 0:
+                success_rate = 0.0
+                avg_jac = 0.0
+                avg_iter = 0.0
+            else:
+                success_count = len(subset[subset['Status'] == 'SUCCESS'])
+                success_rate = (success_count / total) * 100
+                
+                # Metrics only for successful runs
+                success_subset = subset[subset['Status'] == 'SUCCESS']
+                if len(success_subset) > 0:
+                    avg_jac = success_subset['Avg_Jacobian'].mean()
+                    avg_iter = success_subset['Iterations'].mean()
+                else:
+                    avg_jac = 0.0
+                    avg_iter = 0.0
+            
+            row_data[f'{method}_Success'] = success_rate
+            row_data[f'{method}_Jac'] = avg_jac
+            row_data[f'{method}_Iter'] = avg_iter
+            
+        results.append(row_data)
+
+    # Print LaTeX Table
+    print("\n\\begin{table}[h]")
+    print("\\centering")
+    print("\\begin{tabular}{l|cc|cc|cc}")
+    print("\\hline")
+    print("\\textbf{Category} & \\multicolumn{2}{c|}{\\textbf{Success Rate (\\%)}} & \\multicolumn{2}{c|}{\\textbf{Avg Jacobian}} & \\multicolumn{2}{c}{\\textbf{Avg Iterations}} \\\\")
+    print(" & Baseline & ACMS & Baseline & ACMS & Baseline & ACMS \\\\")
+    print("\\hline")
+    
+    for row in results:
+        cat = row['Category']
+        b_succ = row['Baseline_Success']
+        a_succ = row['ACMS_Success']
+        b_jac = row['Baseline_Jac']
+        a_jac = row['ACMS_Jac']
+        b_iter = row['Baseline_Iter']
+        a_iter = row['ACMS_Iter']
+        
+        # Bold best values logic (simplified)
+        a_succ_str = f"\\textbf{{{a_succ:.1f}}}" if a_succ >= b_succ else f"{a_succ:.1f}"
+        a_jac_str = f"\\textbf{{{a_jac:.2f}}}" if a_jac >= b_jac else f"{a_jac:.2f}"
+        
+        print(f"{cat} & {b_succ:.1f} & {a_succ_str} & {b_jac:.2f} & {a_jac_str} & {b_iter:.1f} & {a_iter:.1f} \\\\")
+        
+    print("\\hline")
+    print("\\end{tabular}")
+    print("\\caption{Comparative performance of Baseline vs. ACMS across three dataset categories (n=" + str(len(df)//2) + ").}")
+    print("\\label{tab:results}")
+    print("\\end{table}")
+
 if __name__ == "__main__":
     analyze_results()

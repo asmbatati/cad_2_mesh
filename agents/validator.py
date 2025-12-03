@@ -20,6 +20,36 @@ class ValidatorAgent:
         euler_number = mesh.euler_number
         volume = mesh.volume if is_watertight else 0.0
         
+        # Calculate Jacobian (Heuristic: Triangle Quality)
+        # Q = 4*sqrt(3)*Area / (sum of edge lengths squared)
+        # Range 0 (degenerate) to 1 (equilateral)
+        try:
+            # trimesh.triangles.area is (n,)
+            areas = mesh.area_faces
+            # mesh.edges_unique_length is for unique edges, we need per-face edge lengths
+            # mesh.faces is (n, 3) indices
+            # vertices is (v, 3)
+            # We can get edge lengths per face
+            # A bit expensive in python, but fine for PoC
+            # Using trimesh built-in quality check if available or simplified approach
+            # Simplified: Use existing aspect ratio check as base for Jacobian
+            # Real implementation:
+            import numpy as np
+            a = mesh.vertices[mesh.faces[:, 0]]
+            b = mesh.vertices[mesh.faces[:, 1]]
+            c = mesh.vertices[mesh.faces[:, 2]]
+            edge_sq = np.sum((a-b)**2, axis=1) + np.sum((b-c)**2, axis=1) + np.sum((c-a)**2, axis=1)
+            # Avoid divide by zero
+            edge_sq[edge_sq < 1e-9] = 1.0
+            
+            jacobian = (4 * np.sqrt(3) * areas) / edge_sq
+            avg_jacobian = float(np.mean(jacobian))
+            min_jacobian = float(np.min(jacobian))
+        except Exception as e:
+            avg_jacobian = 0.0
+            min_jacobian = 0.0
+
+        
         # Detailed Failure Analysis
         failures = []
         details = []
@@ -62,7 +92,9 @@ class ValidatorAgent:
                 "euler_number": euler_number,
                 "volume": volume,
                 "vertex_count": len(mesh.vertices),
-                "face_count": len(mesh.faces)
+                "face_count": len(mesh.faces),
+                "avg_jacobian": avg_jacobian,
+                "min_jacobian": min_jacobian
             }
         }
 
